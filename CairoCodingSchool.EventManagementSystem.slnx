@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="EventManagementSystem.ConsoleApp/EventManagementSystem.ConsoleApp.csproj" />
+  <Project Path="EventManagementSystem.Data/EventManagementSystem.Data.csproj" />
+</Solution>
