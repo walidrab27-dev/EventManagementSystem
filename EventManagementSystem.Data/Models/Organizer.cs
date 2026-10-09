@@ -14,5 +14,9 @@ namespace EventManagementSystem.Data.Models
         {
             Id = ++_organId;
         }
+        public Organizer()
+        {
+            
+        }
     }
 }

@@ -50,6 +50,10 @@ namespace EventManagementSystem.Data.Models
             Capacity = capacity;
             Id = ++_venueId;
         }
+        public Venue()
+        {
+            
+        }
         public List<Event> Events { get; } = new List<Event>();
     }
 }

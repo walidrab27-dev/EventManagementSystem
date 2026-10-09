@@ -42,5 +42,9 @@ namespace EventManagementSystem.Data.Models
             VenueId = venueId;
             Id = ++_eventId;
         }
+        public Event()
+        {
+            
+        }
     }
 }

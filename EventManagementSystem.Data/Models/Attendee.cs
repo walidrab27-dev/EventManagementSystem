@@ -14,5 +14,9 @@ namespace EventManagementSystem.Data.Models
         {
             Id = ++_attendeeId;
         }
+        public Attendee()
+        {
+            
+        }
     }
 }

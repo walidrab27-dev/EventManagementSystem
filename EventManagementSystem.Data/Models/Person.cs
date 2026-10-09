@@ -33,7 +33,10 @@ namespace EventManagementSystem.Data.Models
                     throw new ArgumentException("Invalid email format.");
             }
         }
-
+        public Person()
+        {
+            
+        }
         public Person(string name, string email)
         {
             Name = name;

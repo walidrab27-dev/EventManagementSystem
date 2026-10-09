@@ -41,5 +41,9 @@ namespace EventManagementSystem.Data.Models
             AttendeeId = attendeeId;
             Id = ++_ticketId;
         }
+        public Ticket()
+        {
+            
+        }
     }
 }
