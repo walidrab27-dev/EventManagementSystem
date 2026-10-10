@@ -80,15 +80,17 @@ namespace EventManagementSystem.Data.Services
         }
         public IEnumerable<string> AttendeesWhoDidntCheckIn()
         {
-            var res = _allAttendees.GroupJoin(_allTickets, a => a.Id, t => t.AttendeeId,
-                (a, t) => new { a, t }).SelectMany(
-                    x => x.t.DefaultIfEmpty(),
-                    (x, ticket) => new
-                    {
-                        Name = x.a.Name,
-                        CheckIn = ticket?.CheckIn
-                    }
-                ).Where(x=>x.CheckIn==null).Select(a=>a.Name);
+            //var res = _allAttendees.GroupJoin(_allTickets, a => a.Id, t => t.AttendeeId,
+            //    (a, t) => new { a, t }).SelectMany(
+            //        x => x.t.DefaultIfEmpty(),
+            //        (x, ticket) => new
+            //        {
+            //            Name = x.a.Name,
+            //            CheckIn = ticket?.CheckIn
+            //        }
+            //    ).Where(x=>x.CheckIn==null).Select(a=>a.Name);
+            var res = _allTickets.Where(r => r.CheckIn == null).Join(_allAttendees, t => t.AttendeeId, a => a.Id,
+                (t, a) => a.Name).Distinct();
             return res;
         }
         public IEnumerable<MostAttendedEventsDto> MostAttendedEvents()
@@ -128,18 +130,33 @@ namespace EventManagementSystem.Data.Services
         }
         public IEnumerable<EventsFullyBookedDto> EventsThatFullyBooked()
         {
-            var res = _allTickets.GroupBy(x => x.EventId).Join(_allEvents, g => g.Key, e => e.Id,
-                (g, e) => new
-                {
-                    Event = e,
-                    TicketCount = g.Count()
-                }).Join(_allVenues, x => x.Event.VenueId, v => v.Id,
-                    (x, v) => new EventsFullyBookedDto
+            //var res = _allTickets.GroupBy(x => x.EventId).Join(_allEvents, g => g.Key, e => e.Id,
+            //    (g, e) => new
+            //    {
+            //        Event = e,
+            //        TicketCount = g.Count()
+            //    }).Join(_allVenues, x => x.Event.VenueId, v => v.Id,
+            //        (x, v) => new EventsFullyBookedDto
+            //        {
+            //            Title = x.Event.Title,
+            //            TicketCount = x.TicketCount,
+            //            Capacity = v.Capacity
+            //        }).Where(x => x.TicketCount == x.Capacity);
+            var res = _allEvents.Join(_allVenues,e=>e.VenueId,v=>v.Id,
+                    (e,v) => new
+                    {
+                        Event = e,
+                        Venue = v
+                    }
+                ).Where(x=>_allTickets.Count(t=>t.EventId==x.Event.Id)>=x.Venue.Capacity)
+                .Select(
+                    x=> new EventsFullyBookedDto
                     {
                         Title = x.Event.Title,
-                        TicketCount = x.TicketCount,
-                        Capacity = v.Capacity
-                    }).Where(x => x.TicketCount == x.Capacity);
+                        TicketCount = _allTickets.Count(t => t.EventId == x.Event.Id),
+                        Capacity = x.Venue.Capacity
+                    }
+                );
             return res;
         }
     }

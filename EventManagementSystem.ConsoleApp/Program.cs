@@ -1,5 +1,4 @@
 ﻿using EventManagementSystem.Data.Interfaces;
-using EventManagementSystem.Data.Models;
 using EventManagementSystem.Data.Repositories;
 using EventManagementSystem.Data.Services;
 using System;
@@ -10,13 +9,22 @@ namespace EventManagementSystem.ConsoleApp
     {
         static void Main(string[] args)
         {
-            IDatabaseManager dbManager = new SqlDatabaseManager(@"Server=walidrab27\SQLEXPRESS;Database=EventManagementSystemDB;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;");
-            EventQueryService eventQueryService = new EventQueryService(dbManager);
-            var fullyBookedEvents = eventQueryService.EventsThatFullyBooked();
-            foreach (var eventInfo in fullyBookedEvents)
+            try
             {
-                Console.WriteLine($"Event: {eventInfo.Title}, Tickets Sold: {eventInfo.TicketCount} / {eventInfo.Capacity}");
+                IDatabaseManager dbManager = new InMemoryDatabaseManager();
+                //IDatabaseManager dbManager = new SqlDatabaseManager(@"Server=walidrab27\SQLEXPRESS;Database=EventManagementSystemDB;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;");
+                EventQueryService eventQueryService = new EventQueryService(dbManager);
+                EventReportPrinter reportPrinter = new EventReportPrinter(eventQueryService);
+
+                reportPrinter.PrintAllReports();
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nAn unexpected error occurred: {ex.Message}");
+            }
+
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
         }
     }
 }
